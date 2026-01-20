@@ -793,73 +793,81 @@ function renderCSProgress() {
     }
   }
 
-  function renderHealthPoints() {
-    if (!hpData || !hpData.leaderboard) return;
+ function renderHealthPoints() {
+  if (!hpData || !hpData.leaderboard) return;
 
-    const rows = hpData.leaderboard;
-    const search = document.getElementById("hp-search");
-    const meta = document.getElementById("hp-meta");
-    const table = document.getElementById("hp-table");
+  const rows = hpData.leaderboard;
+  const search = document.getElementById("hp-search");
+  const meta = document.getElementById("hp-meta");
+  const table = document.getElementById("hp-table");
 
-    let filtered = rows;
-    if (search.value) {
-      const q = search.value.toLowerCase();
-      filtered = rows.filter(r =>
-        r.Name.toLowerCase().includes(q) ||
-        r.Email.toLowerCase().includes(q)
-      );
-    }
+  let filtered = rows;
+  if (search.value) {
+    const q = search.value.toLowerCase();
+    filtered = rows.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      r.email.toLowerCase().includes(q)
+    );
+  }
 
-    meta.textContent = `Students: ${filtered.length}`;
+  meta.textContent = `Students: ${filtered.length}`;
 
-    const thead = table.querySelector("thead");
-    const tbody = table.querySelector("tbody");
-    thead.innerHTML = "";
-    tbody.innerHTML = "";
+  const thead = table.querySelector("thead");
+  const tbody = table.querySelector("tbody");
+  thead.innerHTML = "";
+  tbody.innerHTML = "";
 
-    const columns = ["Rank", "Name", "Email", "Current HP", "Base HP", "HP Status", "Details"];
+  const columns = ["Rank", "Name", "Email", "Current HP", "Base HP", "HP Status", "Details"];
 
+  // ✅ HEADER
+  const trh = document.createElement("tr");
+  columns.forEach(c => {
+    const th = document.createElement("th");
+    th.textContent = c;
+    trh.appendChild(th);
+  });
+  thead.appendChild(trh);
 
-    filtered.forEach((r, i) => {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td class="num">${r.rank}</td>
-    <td>${r.name}</td>
-    <td>${r.email}</td>
-    <td class="num">${Number(r.currentHP).toFixed(2)}</td>
-    <td class="num">${Number(r.baseHP).toFixed(2)}</td>
-    <td>
-      <span style="
-        padding:4px 10px;
-        border-radius:999px;
-        font-weight:700;
-        font-size:12px;
-        color:${r.status === "SAFE" ? "#1B5E20" : "#B71C1C"};
-        background:${r.status === "SAFE" ? "#C8E6C9" : "#FFCDD2"};
-      ">
-        ${r.status}
-      </span>
-    </td>
-    <td>
-      <button onclick="viewHpDetail('${r.email}')"
-        style="
-          padding:6px 10px;
-          border:none;
-          border-radius:6px;
-          background:#1a237e;
-          color:white;
-          cursor:pointer;
-          font-weight:600;
+  // ✅ BODY
+  filtered.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="num">${r.rank}</td>
+      <td>${r.name}</td>
+      <td>${r.email}</td>
+      <td class="num">${Number(r.currentHP).toFixed(2)}</td>
+      <td class="num">${Number(r.baseHP).toFixed(2)}</td>
+      <td>
+        <span style="
+          padding:4px 10px;
+          border-radius:999px;
+          font-weight:700;
+          font-size:12px;
+          color:${r.status === "SAFE" ? "#1B5E20" : "#B71C1C"};
+          background:${r.status === "SAFE" ? "#C8E6C9" : "#FFCDD2"};
         ">
-        View
-      </button>
-    </td>
-  `;
-  tbody.appendChild(tr);
-});
+          ${r.status}
+        </span>
+      </td>
+      <td>
+        <button onclick="viewHpDetail('${r.email}')"
+          style="
+            padding:6px 10px;
+            border:none;
+            border-radius:6px;
+            background:#1a237e;
+            color:white;
+            cursor:pointer;
+            font-weight:600;
+          ">
+          View
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+} // ✅ FUNCTION CLOSED
 
-
-  document.getElementById("hp-search")?.addEventListener("input", renderHealthPoints);
   // ========= UI WIRING =========
   function activateTopTab(key) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
